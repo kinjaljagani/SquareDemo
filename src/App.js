@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import Navbar from './component/navbar';
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
   
   return (
     <div>
+      <Navbar />
     {loading && <div>Loading...</div>}
     {error && <div>Error loading data</div>}
     {!loading && !error && (
