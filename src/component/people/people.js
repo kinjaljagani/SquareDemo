@@ -79,8 +79,8 @@ function People() {
       </div>
 
       {selectedCharacter && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="modal  ">
+          <div className="modal-content bg-info">
             <span className="close" onClick={closeModal}>
               &times;
             </span>
