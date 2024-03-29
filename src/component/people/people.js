@@ -1,31 +1,52 @@
 import React, { useState, useEffect } from "react";
 import Spinner from "../spinner/Spinner";
+import LoadingBar from "react-top-loading-bar";
 
-function People() {
+const People = (props) =>{
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [progress, setProgress] = useState(0); // Added progress state
 
   useEffect(() => {
     const fetchCharacters = async () => {
+      props.setProgress(10);
+      setLoading(true); // Set loading to true when fetching data
       try {
-        const response = await fetch(
+        let response = await fetch(
           `https://swapi.dev/api/people/?page=${currentPage}`
         );
-        const data = await response.json();
+        props.setProgress(30);
+        let data = await response.json();
+        props.setProgress(70);
         setCharacters(data.results);
         setTotalPages(Math.ceil(data.count / 10)); // Assuming 10 characters per page
-        setLoading(false);
+        setLoading(false); // Set loading to false after fetching data
+        props.setProgress(100);
       } catch (error) {
-        setLoading(false);
+        setLoading(false); // Set loading to false in case of error
         setError(true);
       }
     };
+
     fetchCharacters();
   }, [currentPage]);
+
+  useEffect(() => {
+    // Simulate loading progress while loading is true
+    if (loading) {
+      const interval = setInterval(() => {
+        setProgress((prevProgress) =>
+          prevProgress >= 100 ? 100 : prevProgress + 5
+        );
+      }, 200);
+
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
 
   const openModal = (character) => {
     setSelectedCharacter(character);
@@ -45,7 +66,11 @@ function People() {
 
   return (
     <>
-      {loading && <Spinner />}
+      {/* Loading bar displayed only when loading is true */}
+      {loading && <LoadingBar height={4} color="#fdfbfc" progress={progress} />}
+
+      {loading && <Spinner />} {/* Spinner displayed only when loading is true */}
+
       {error && (
         <div className="text-white text-center m-5 d-flex flex-column">
           <img src="./component/error.jpeg" alt="" />
@@ -87,7 +112,12 @@ function People() {
             <h2>{selectedCharacter.name}</h2>
             <p>Height: {selectedCharacter.height} meters</p>
             <p>Mass: {selectedCharacter.mass} kg</p>
-            <p>Date added to API: {selectedCharacter.created.slice(8, 10)}-{selectedCharacter.created.slice(5, 7)}-{selectedCharacter.created.slice(0, 4)}</p>
+            <p>
+              Date added to API:{" "}
+              {selectedCharacter.created.slice(8, 10)}-
+              {selectedCharacter.created.slice(5, 7)}-
+              {selectedCharacter.created.slice(0, 4)}
+            </p>
             <p>Films: {selectedCharacter.films.length}</p>
             <p>Birth Year: {selectedCharacter.birth_year}</p>
           </div>

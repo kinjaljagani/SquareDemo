@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// App.js
+import React, { useState } from "react";
 import "./App.css";
 import Navbar from "./component/navbar/navbar";
 import LoadingBar from "react-top-loading-bar";
@@ -13,11 +14,16 @@ function App() {
     <div>
       <BrowserRouter>
         <Navbar />
-        <LoadingBar height={4} color="#f11946" progress={progress} />
+        <LoadingBar height={4} color="#fdfbfc" progress={progress} />
         <Routes>
           <Route exact path="/" element={<Home />} />
 
-          <Route exact path="/people" element={<People />} />
+          {/* Pass setProgress as a prop to the People component */}
+          <Route
+            exact
+            path="/people"
+            element={<People setProgress={setProgress} />}
+          />
         </Routes>
       </BrowserRouter>
     </div>
